@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wbh.wilfred.ivege.data.mybatis.mapper.OrderMapper">
+    <resultMap id="OrderMap" type="Order">
+        <id property="id" column="id"/>
+        <result property="address" column="address"/>
+        <result property="name" column="name"/>
+        <result property="phone" column="phone"/>
+        <result property="originalTotal" column="originalTotal"/>
+        <result property="creationTime" column="creation_time"/>
+        <result property="deliveryTime" column="delivery_time"/>
+        <result property="completionTime" column="completionTime"/>
+        <result property="status" column="status"/>
+        <collection property="items" ofType="OrderItem" column="id"
+                    select="wbh.wilfred.ivege.data.mybatis.mapper.OrderItemMapper.getOrderItemByOrderId"/>
+    </resultMap>
+    <select id="getOrderById" resultMap="OrderMap">
+        SELECT * FROM `order` WHERE id = #{id} LIMIT 1
+    </select>
+    <insert id="addOrder" parameterType="Order" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO `order` (address, `name`, phone, originalTotal,
+        creation_time, delivery_time, `status`)
+        VALUES (#{address}, #{name}, #{phone}, #{originalTotal}, now(),
+        #{deliveryTime}, #{status})
+    </insert>
+    <select id="getOrders" resultMap="OrderMap">
+        SELECT * FROM `order`
+        <where>
+            <if test="address != null">
+                address = #{address}
+            </if>
+            <if test="name != null">
+                AND name = #{name}
+            </if>
+            <if test="phone != null">
+                AND phone = #{phone}
+            </if>
+            <if test="minTotal != null">
+                AND originalTotal >= #{minTotal}
+            </if>
+            <if test="maxTotal != null">
+                <![CDATA[
+                AND originalTotal <= #{maxTotal}
+                ]]>
+            </if>
+            <if test="startCreationTime != null">
+                AND creation_time >= #{startCreationTime}
+            </if>
+            <if test="endCreationTime != null">
+                <![CDATA[
+                AND creation_time <= #{endCreationTime}
+                ]]>
+            </if>
+            <if test="startDeliveryTime != null">
+                AND delivery_time >= #{startDeliveryTime}
+            </if>
+            <if test="endDeliveryTime != null">
+                <![CDATA[
+                AND delivery_time <= #{endDeliveryTime}
+                ]]>
+            </if>
+            <if test="startCompletionTime != null">
+                AND completion_time >= #{startCompletionTime}
+            </if>
+            <if test="endCompletionTime != null">
+                <![CDATA[
+                AND completion_time <= #{endCompletionTime}
+                ]]>
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+</mapper>

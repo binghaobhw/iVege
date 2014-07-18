@@ -1,0 +1,35 @@
+apply plugin: 'java'
+apply plugin: 'jetty'
+
+version = '1.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+configurations {
+    compile.exclude group: 'commons-logging', module: 'commons-logging'
+}
+dependencies {
+    compile 'org.springframework:spring-webmvc:4.0.5.RELEASE',
+            'org.slf4j:jcl-over-slf4j:1.7.7',
+            'org.mybatis:mybatis-spring:1.2.2',
+            'com.alibaba:druid:1.0.6',
+            'mysql:mysql-connector-java:5.1.31',
+            'org.mybatis:mybatis:3.2.7',
+            'org.springframework:spring-jdbc:4.0.5.RELEASE',
+            'org.hibernate:hibernate-validator:5.1.1.Final',
+            'joda-time:joda-time:2.3',
+            'com.fasterxml.jackson.core:jackson-databind:2.4.1.1',
+            'ch.qos.logback:logback-classic:1.1.2',
+            'com.google.guava:guava:17.0',
+            'org.apache.commons:commons-collections4:4.0',
+            'org.springframework.data:spring-data-mongodb:1.5.1.RELEASE'
+
+
+    testCompile 'org.springframework:spring-test:4.0.5.RELEASE',
+            'junit:junit:4.11'
+
+
+}
