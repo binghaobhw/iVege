@@ -3,7 +3,7 @@ package wbh.wilfred.ivege.model.selector;
 import wbh.wilfred.ivege.model.Discount;
 
 public class DiscountSelector extends PromotionSelector {
-    private Discount.Type type;
+    Discount.Type type;
 
     public Discount.Type getType() {
         return type;

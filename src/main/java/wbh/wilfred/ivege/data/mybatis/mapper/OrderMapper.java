@@ -6,7 +6,7 @@ import wbh.wilfred.ivege.model.selector.OrderSelector;
 import java.util.List;
 
 public interface OrderMapper {
-    public Order getOrderById(String id);
+    public Order getOrderById(long id);
     public String addOrder(Order order);
     public List<Order> getOrders(OrderSelector orderSelector);
 }

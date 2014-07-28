@@ -5,9 +5,18 @@ import wbh.wilfred.ivege.model.Promotion;
 import wbh.wilfred.ivege.model.Rmb;
 
 public class PromotionSelector {
+    private String id;
     private Rmb total;
     private DateTime dateTime;
     private Promotion.Status status;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Rmb getTotal() {
         return total;

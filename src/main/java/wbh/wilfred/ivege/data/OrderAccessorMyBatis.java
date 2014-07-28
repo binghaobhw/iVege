@@ -18,18 +18,15 @@ public class OrderAccessorMyBatis implements OrderAccessor {
     private OrderItemMapper orderItemMapper;
 
     @Override
-    public Order getOrderById(String id) {
+    public Order getOrderById(long id) {
         return orderMapper.getOrderById(id);
     }
 
     @Override
-    public String addOrder(Order order) {
+    public long addOrder(Order order) {
         orderMapper.addOrder(order);
-        String orderId = order.getId();
+        long orderId = order.getId();
         List<OrderItem> orderItems = order.getItems();
-        for (OrderItem orderItem: orderItems) {
-            orderItem.setOrderId(orderId);
-        }
         orderItemMapper.addOrderItems(orderItems);
         return orderId;
     }
@@ -37,5 +34,10 @@ public class OrderAccessorMyBatis implements OrderAccessor {
     @Override
     public List<Order> getOrders(OrderSelector orderSelector) {
         return null;
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+
     }
 }

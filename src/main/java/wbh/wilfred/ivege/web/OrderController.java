@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import wbh.wilfred.ivege.model.Order;
@@ -16,22 +17,23 @@ import java.util.List;
 
 @RestController
 public class OrderController {
+    @Autowired
     private OrderService orderService;
 
-    @Autowired
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
-
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.GET)
-    public Order getOrderById(@PathVariable String id) {
+    public Order getOrderById(@PathVariable long id) {
         return orderService.getOrderById(id);
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addOrder(@RequestBody Order order) {
-        orderService.addOrder(order);
+    public void addOrder(@RequestBody Order order,
+                         @RequestParam boolean confirmed) {
+        if (confirmed) {
+            orderService.addConfirmedOrder(order);
+        } else {
+            orderService.addUnconfirmedOrder(order);
+        }
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
@@ -39,8 +41,12 @@ public class OrderController {
         return orderService.getOrders(orderSelector);
     }
 
-    @RequestMapping(value = "/orders/amount", method = RequestMethod.GET)
-    public Order getOrderAmount(@RequestBody Order order) {
-        return orderService.calculateTotal(order);
+    @RequestMapping(value = "/orders/{id}", method = RequestMethod.PUT)
+    public Order updateOrder(@PathVariable String id, @RequestBody Order order) {
+        if (order.getStatus() == Order.Status.CONFIRMED) {
+            return orderService.calculateOrder(order);
+        }
+        orderService.updateOrder(order);
+        return order;
     }
 }

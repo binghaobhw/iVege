@@ -53,6 +53,10 @@ public class Rmb implements Comparable<Rmb> {
         return new Rmb(dividedByScaleAndRound(product, scale));
     }
 
+    public Rmb times(Quantity multiplier) {
+        return times(multiplier.getValue());
+    }
+
     public static long dividedByScaleAndRound(long val, int scale) {
         if (val == 0L) {
             return val;
@@ -99,8 +103,15 @@ public class Rmb implements Comparable<Rmb> {
         return compareTo(rmb) >= 0;
     }
 
-    public boolean equalTo(Rmb rmb) {
-        return compareTo(rmb) == 0;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Rmb) {
+            return compareTo((Rmb) obj) == 0;
+        }
+        return false;
     }
 
     public boolean lessThan(Rmb rmb) {

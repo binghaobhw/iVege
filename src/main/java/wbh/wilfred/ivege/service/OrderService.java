@@ -7,11 +7,10 @@ import java.util.List;
 
 
 public interface OrderService {
-    public Order getOrderById(String id);
-    public Order addOrder(Order order);
+    public Order getOrderById(long id);
+    public Order addConfirmedOrder(Order order);
+    public Order addUnconfirmedOrder(Order order);
+    public Order calculateOrder(Order order);
     public List<Order> getOrders(OrderSelector orderSelector);
-    public Order calculateTotal(Order order);
-    public Order calculateDiscountedTotal(Order order);
-    public Order calculateBonus(Order order);
-    public Order completeOrder(Order order);
+    public void updateOrder(Order order);
 }

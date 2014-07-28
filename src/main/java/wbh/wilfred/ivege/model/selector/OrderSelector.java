@@ -11,12 +11,12 @@ public class OrderSelector {
     String phone;
     BigDecimal minAmount;
     BigDecimal maxAmount;
-    DateTime startCreationTime;
-    DateTime endCreationTime;
-    DateTime startDeliveryTime;
-    DateTime endDeliveryTime;
-    DateTime startCompletionTime;
-    DateTime endCompletionTime;
+    DateTime startCreateTime;
+    DateTime endCreateTime;
+    DateTime startDeliverTime;
+    DateTime endDeliverTime;
+    DateTime startCompleteTime;
+    DateTime endCompleteTime;
     Order.Status status;
 
     public String getName() {
@@ -59,52 +59,52 @@ public class OrderSelector {
         this.maxAmount = maxAmount;
     }
 
-    public DateTime getStartCreationTime() {
-        return startCreationTime;
+    public DateTime getStartCreateTime() {
+        return startCreateTime;
     }
 
-    public void setStartCreationTime(DateTime startCreationTime) {
-        this.startCreationTime = startCreationTime;
+    public void setStartCreateTime(DateTime startCreateTime) {
+        this.startCreateTime = startCreateTime;
     }
 
-    public DateTime getEndCreationTime() {
-        return endCreationTime;
+    public DateTime getEndCreateTime() {
+        return endCreateTime;
     }
 
-    public void setEndCreationTime(DateTime endCreationTime) {
-        this.endCreationTime = endCreationTime;
+    public void setEndCreateTime(DateTime endCreateTime) {
+        this.endCreateTime = endCreateTime;
     }
 
-    public DateTime getStartDeliveryTime() {
-        return startDeliveryTime;
+    public DateTime getStartDeliverTime() {
+        return startDeliverTime;
     }
 
-    public void setStartDeliveryTime(DateTime startDeliveryTime) {
-        this.startDeliveryTime = startDeliveryTime;
+    public void setStartDeliverTime(DateTime startDeliverTime) {
+        this.startDeliverTime = startDeliverTime;
     }
 
-    public DateTime getEndDeliveryTime() {
-        return endDeliveryTime;
+    public DateTime getEndDeliverTime() {
+        return endDeliverTime;
     }
 
-    public void setEndDeliveryTime(DateTime endDeliveryTime) {
-        this.endDeliveryTime = endDeliveryTime;
+    public void setEndDeliverTime(DateTime endDeliverTime) {
+        this.endDeliverTime = endDeliverTime;
     }
 
-    public DateTime getStartCompletionTime() {
-        return startCompletionTime;
+    public DateTime getStartCompleteTime() {
+        return startCompleteTime;
     }
 
-    public void setStartCompletionTime(DateTime startCompletionTime) {
-        this.startCompletionTime = startCompletionTime;
+    public void setStartCompleteTime(DateTime startCompleteTime) {
+        this.startCompleteTime = startCompleteTime;
     }
 
-    public DateTime getEndCompletionTime() {
-        return endCompletionTime;
+    public DateTime getEndCompleteTime() {
+        return endCompleteTime;
     }
 
-    public void setEndCompletionTime(DateTime endCompletionTime) {
-        this.endCompletionTime = endCompletionTime;
+    public void setEndCompleteTime(DateTime endCompleteTime) {
+        this.endCompleteTime = endCompleteTime;
     }
 
     public Order.Status getStatus() {

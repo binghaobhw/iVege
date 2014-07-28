@@ -12,33 +12,34 @@ import java.util.ListIterator;
 public class DiscountChooser {
     private DiscountChooser() {}
 
-    public static Discount bestDiscount(Rmb original, List<Discount> discounts) {
+    public static <T extends Discount> T bestDiscount(Rmb original,
+                                         List<T> discounts) {
         if (CollectionUtils.isEmpty(discounts)) {
             throw new IllegalArgumentException();
         }
         Collections.sort(discounts);
-        List<Discount> differentTypeBests = new ArrayList<Discount>();
-        ListIterator<Discount> iterator = discounts.listIterator();
-        Discount next = iterator.next();
+        List<T> differentTypeBests = new ArrayList<T>();
+        ListIterator<T> iterator = discounts.listIterator();
+        T next = iterator.next();
         while (iterator.hasNext()) {
-            Discount current = next;
+            T current = next;
             next = iterator.next();
             if (current.getClass() != next.getClass()) {
                 differentTypeBests.add(current);
             }
         }
         differentTypeBests.add(next);
-        Discount best = null;
+        T best = null;
         Rmb min = null;
-        for (Discount discount: differentTypeBests) {
-            Rmb current = discount.calculate(original);
+        for (T discount: differentTypeBests) {
+            Rmb current = discount.apply(original);
             if (min == null) {
                 best = discount;
                 min = current;
             } else {
                 int d = current.compareTo(min);
-                if (d < 0 || (d == 0 && discount.getCreationTime().isAfter(best
-                        .getCreationTime()))) {
+                if (d < 0 || (d == 0 && discount.getCreateTime().isAfter(best
+                        .getCreateTime()))) {
                     best = discount;
                     min = current;
                 }

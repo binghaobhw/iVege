@@ -7,9 +7,10 @@ import wbh.wilfred.ivege.model.selector.DiscountSelector;
 import java.util.List;
 
 public interface DiscountAccessor {
-    public String addDiscount(Discount discount);
-    public List<Discount> getDiscounts(DiscountSelector selector);
-    public List<Discount> getInTimeDiscounts(DateTime dateTime);
-    public List<Discount> getInTimeDiscounts(DateTime dateTime,
-                                             Discount.Type type);
+    public <T> T getDiscountById(long id);
+    public long addDiscount(Discount discount);
+    public <T> List<T> getDiscounts(DiscountSelector selector);
+    public void updateDiscount(Discount discount);
+    public List<Discount> getInTimeOrderDiscounts(DateTime dateTime);
+    public List<Discount> getInTimeProductDiscounts(DateTime dateTime);
 }

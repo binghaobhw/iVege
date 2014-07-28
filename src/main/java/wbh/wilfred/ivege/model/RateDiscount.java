@@ -2,10 +2,10 @@ package wbh.wilfred.ivege.model;
 
 import java.math.BigDecimal;
 
-public class RateDiscount extends ProductDiscount {
+public class RateDiscount extends Discount {
     private BigDecimal rate;
     @Override
-    public Rmb calculate(Rmb original) {
+    public Rmb apply(Rmb original) {
         return original.times(rate);
     }
 

@@ -1,4 +1,4 @@
-package wbh.wilfred.ivege.persistence.typehandler;
+package wbh.wilfred.ivege.data.mybatis.typehandler;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;

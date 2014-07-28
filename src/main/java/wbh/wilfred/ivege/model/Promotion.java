@@ -6,29 +6,30 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 public abstract class Promotion {
-    private String id;
+    private long id;
     private String name;
     private boolean forAll;
-    private List<String> categoryIds;
-    private List<String> productIds;
+    private List<Category> categories;
+    private List<Product> products;
     private Rmb minTotal;
     private DateTime start;
     private DateTime end;
     private Status status;
-    private DateTime creationTime;
+    private DateTime createTime;
 
     public enum Status {
         ACTIVE, INACTIVE, DELETED
     }
 
-    public boolean isForCategory(String categoryId) {
-        return forAll || (CollectionUtils.isNotEmpty(categoryIds) &&
-                categoryIds.contains(categoryId));
+    public boolean isForCategory(Category category) {
+        return forAll || (CollectionUtils.isNotEmpty(categories) &&
+                categories.contains(category));
     }
 
-    public boolean isForProduct(String productId) {
-        return forAll || (CollectionUtils.isNotEmpty(productIds) &&
-                productIds.contains(productId));
+    public boolean isForProduct(Product product) {
+        return forAll || isForCategory(product.getCategory()) ||
+                (CollectionUtils.isNotEmpty(products) && products.contains
+                (product));
     }
 
     public boolean isForAll() {
@@ -39,11 +40,11 @@ public abstract class Promotion {
         this.forAll = forAll;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -55,20 +56,20 @@ public abstract class Promotion {
         this.name = name;
     }
 
-    public List<String> getCategoryIds() {
-        return categoryIds;
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setCategoryIds(List<String> categoryIds) {
-        this.categoryIds = categoryIds;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
-    public List<String> getProductIds() {
-        return productIds;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setProductIds(List<String> productIds) {
-        this.productIds = productIds;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public DateTime getStart() {
@@ -103,11 +104,11 @@ public abstract class Promotion {
         this.minTotal = minTotal;
     }
 
-    public DateTime getCreationTime() {
-        return creationTime;
+    public DateTime getCreateTime() {
+        return createTime;
     }
 
-    public void setCreationTime(DateTime creationTime) {
-        this.creationTime = creationTime;
+    public void setCreateTime(DateTime createTime) {
+        this.createTime = createTime;
     }
 }

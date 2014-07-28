@@ -6,24 +6,22 @@ import org.joda.time.DateTime;
 import java.util.List;
 
 public class Order {
-    private String id;
-    private String address;
+    private long id;
     private String name;
     private String phone;
+    private String address;
+    private List<OrderItem> items;
     private Rmb originalTotal;
     private Rmb total;
-    private DateTime creationTime;
-    private DateTime deliveryTime;
-    private DateTime completionTime;
+    private DateTime createTime;
+    private DateTime deliverTime;
+    private DateTime completeTime;
     private Status status;
-    private List<OrderItem> items;
-    private String discountId;
-    private String discountName;
-    private String bonusId;
-    private String bonusName;
+    private Discount discount;
+    private Gift gift;
 
     public enum Status {
-        VALID, DELIVERING, COMPLETE, CANCELED
+        UNCONFIRMED, CONFIRMED, DELIVERING, COMPLETED, CANCELED
     }
 
     public Rmb getTotal() {
@@ -34,27 +32,31 @@ public class Order {
         this.total = total;
     }
 
-    public void valid() {
-        status = Status.VALID;
+    public void confirmed() {
+        status = Status.CONFIRMED;
+    }
+
+    public void unconfirmed() {
+        status = Status.UNCONFIRMED;
     }
 
     public void canceled() {
         status = Status.CANCELED;
     }
 
-    public void complete() {
-        status = Status.COMPLETE;
+    public void completed() {
+        status = Status.COMPLETED;
     }
 
     public void delivering() {
         status = Status.DELIVERING;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -82,12 +84,12 @@ public class Order {
         this.originalTotal = originalTotal;
     }
 
-    public DateTime getCompletionTime() {
-        return completionTime;
+    public DateTime getCompleteTime() {
+        return completeTime;
     }
 
-    public void setCompletionTime(DateTime completionTime) {
-        this.completionTime = completionTime;
+    public void setCompleteTime(DateTime completeTime) {
+        this.completeTime = completeTime;
     }
 
     public Status getStatus() {
@@ -114,51 +116,35 @@ public class Order {
         this.phone = phone;
     }
 
-    public DateTime getCreationTime() {
-        return creationTime;
+    public DateTime getCreateTime() {
+        return createTime;
     }
 
-    public void setCreationTime(DateTime creationTime) {
-        this.creationTime = creationTime;
+    public void setCreateTime(DateTime createTime) {
+        this.createTime = createTime;
     }
 
-    public DateTime getDeliveryTime() {
-        return deliveryTime;
+    public DateTime getDeliverTime() {
+        return deliverTime;
     }
 
-    public void setDeliveryTime(DateTime deliveryTime) {
-        this.deliveryTime = deliveryTime;
+    public void setDeliverTime(DateTime deliverTime) {
+        this.deliverTime = deliverTime;
     }
 
-    public String getDiscountId() {
-        return discountId;
+    public Discount getDiscount() {
+        return discount;
     }
 
-    public void setDiscountId(String discountId) {
-        this.discountId = discountId;
+    public void setDiscount(Discount discount) {
+        this.discount = discount;
     }
 
-    public String getDiscountName() {
-        return discountName;
+    public Gift getGift() {
+        return gift;
     }
 
-    public void setDiscountName(String discountName) {
-        this.discountName = discountName;
-    }
-
-    public String getBonusId() {
-        return bonusId;
-    }
-
-    public void setBonusId(String bonusId) {
-        this.bonusId = bonusId;
-    }
-
-    public String getBonusName() {
-        return bonusName;
-    }
-
-    public void setBonusName(String bonusName) {
-        this.bonusName = bonusName;
+    public void setGift(Gift gift) {
+        this.gift = gift;
     }
 }

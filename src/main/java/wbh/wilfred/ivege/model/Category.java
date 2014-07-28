@@ -1,14 +1,14 @@
 package wbh.wilfred.ivege.model;
 
 public class Category {
-    private String id;
+    private long id;
     private String name;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -18,5 +18,19 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Category) {
+            Category x = (Category) obj;
+            if (id == x.getId() && name.equals(x.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

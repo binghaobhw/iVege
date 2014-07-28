@@ -1,19 +1,24 @@
 package wbh.wilfred.ivege.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 import wbh.wilfred.ivege.data.DiscountAccessor;
+import wbh.wilfred.ivege.data.GiftAccessor;
 import wbh.wilfred.ivege.data.OrderAccessor;
 import wbh.wilfred.ivege.model.Discount;
+import wbh.wilfred.ivege.model.Gift;
 import wbh.wilfred.ivege.model.Order;
 import wbh.wilfred.ivege.model.OrderItem;
+import wbh.wilfred.ivege.model.Product;
+import wbh.wilfred.ivege.model.Promotion;
+import wbh.wilfred.ivege.model.Quantity;
 import wbh.wilfred.ivege.model.Rmb;
+import wbh.wilfred.ivege.model.selector.GiftSelector;
 import wbh.wilfred.ivege.model.selector.OrderSelector;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,17 +29,32 @@ public class OrderServiceImpl implements OrderService {
     private OrderAccessor orderAccessor;
     @Autowired
     private DiscountAccessor discountAccessor;
+    @Autowired
+    private GiftAccessor giftAccessor;
 
     @Override
-    public Order getOrderById(String id) {
+    public Order getOrderById(long id) {
         return orderAccessor.getOrderById(id);
     }
 
     @Override
-    @Transactional
-    public Order addOrder(@Validated Order order) {
-        completeOrder(order);
+    public Order addConfirmedOrder(Order order) {
+        processConfirmedOrder(order);
         orderAccessor.addOrder(order);
+        return order;
+    }
+
+    @Override
+    public Order addUnconfirmedOrder(Order order) {
+        processUnconfirmedOrder(order);
+        orderAccessor.addOrder(order);
+        return order;
+    }
+
+    @Override
+    public Order calculateOrder(Order order) {
+        processConfirmedOrder(order);
+        orderAccessor.updateOrder(order);
         return order;
     }
 
@@ -44,33 +64,40 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void updateOrder(Order order) {
+        orderAccessor.updateOrder(order);
+    }
+
     public Order calculateTotal(Order order) {
         List<OrderItem> orderItems= order.getItems();
         Rmb total = Rmb.ZERO;
         List<Discount> inTimeProductDiscounts = discountAccessor
-                .getInTimeDiscounts(order.getCreationTime(), Discount.Type.PRODUCT);
+                .getInTimeProductDiscounts(order.getCreateTime());
         for (OrderItem item: orderItems) {
+            Quantity quantity = item.getActualQuantity();
+            if (quantity == null) {
+                throw new IllegalArgumentException();
+            }
             List<Discount> availableDiscounts = new ArrayList<Discount>();
+            Product product = item.getProduct();
             for (Discount discount: inTimeProductDiscounts) {
-                if (discount.isForCategory(item.getCategoryId()) || discount
-                        .isForProduct(item.getProductId())) {
+                if (discount.isForProduct(product)) {
                     availableDiscounts.add(discount);
                 }
             }
             Rmb price;
+            Discount bestDiscount;
             if (availableDiscounts.isEmpty()) {
-                price = item.getOriginalPrice();
+                bestDiscount = null;
+                price = product.getPrice();
             } else {
-                Discount bestDiscount = DiscountChooser.bestDiscount(item.getOriginalPrice(),
-                        availableDiscounts);
-                price = bestDiscount.calculate(item.getOriginalPrice());
-                item.setDiscountId(bestDiscount.getId());
-                item.setDiscountName(bestDiscount.getName());
-                item.setPrice(price);
+                bestDiscount = DiscountChooser.bestDiscount(product
+                        .getPrice(), availableDiscounts);
+                price = bestDiscount.apply(product.getPrice());
             }
-            BigDecimal amount = item.getAmount();
-            Rmb subtotal = (amount.compareTo(BigDecimal.ONE) == 0) ?
-                    price : price.times(item.getAmount());
+            item.setDiscount(bestDiscount);
+            item.setPrice(price);
+            Rmb subtotal = price.times(quantity);
             item.setSubtotal(subtotal);
             total = total.plus(subtotal);
         }
@@ -78,13 +105,12 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Override
-    public Order calculateDiscountedTotal(Order order) {
+    public Order calculateOrderDiscount(Order order) {
         if (order.getOriginalTotal() == null) {
             calculateTotal(order);
         }
         List<Discount> inTimeOrderDiscounts = discountAccessor
-                .getInTimeDiscounts(order.getCreationTime(), Discount.Type.ORDER);
+                .getInTimeOrderDiscounts(order.getCreateTime());
         Rmb orderTotal = order.getOriginalTotal();
         List<Discount> availableDiscounts = new ArrayList<Discount>();
         for (Discount discount: inTimeOrderDiscounts) {
@@ -99,26 +125,40 @@ public class OrderServiceImpl implements OrderService {
         } else {
             Discount bestDiscount = DiscountChooser.bestDiscount(orderTotal,
                     availableDiscounts);
-            order.setDiscountId(bestDiscount.getId());
-            order.setDiscountName(bestDiscount.getName());
-            discountedTotal = bestDiscount.calculate(orderTotal);
+            order.setDiscount(bestDiscount);
+            discountedTotal = bestDiscount.apply(orderTotal);
         }
         order.setTotal(discountedTotal);
         return order;
     }
 
-    @Override
-    public Order calculateBonus(Order order) {
-        return null;
+    public Order calculateGift(Order order) {
+        GiftSelector selector = new GiftSelector();
+        selector.setDateTime(order.getCreateTime());
+        selector.setStatus(Promotion.Status.ACTIVE);
+        List<Gift> inTimeGifts = giftAccessor.getGifts(selector);
+        Gift bestGift = (CollectionUtils.isNotEmpty(inTimeGifts))? null:
+                GiftChooser.bestGift(inTimeGifts);
+        order.setGift(bestGift);
+        return order;
     }
 
-    @Override
-    public Order completeOrder(Order order) {
-        order.setCreationTime(DateTime.now());
+    public Order processConfirmedOrder(Order order) {
+        if (order.getCreateTime() == null) {
+            order.setCreateTime(DateTime.now());
+        }
         calculateTotal(order);
-        calculateDiscountedTotal(order);
-        calculateBonus(order);
-        order.valid();
+        calculateOrderDiscount(order);
+        calculateGift(order);
+        order.confirmed();
+        return order;
+    }
+
+    public Order processUnconfirmedOrder(Order order) {
+        if (order.getCreateTime() == null) {
+            order.setCreateTime(DateTime.now());
+        }
+        order.unconfirmed();
         return order;
     }
 }

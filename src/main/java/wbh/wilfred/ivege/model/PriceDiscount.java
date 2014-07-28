@@ -1,10 +1,10 @@
 package wbh.wilfred.ivege.model;
 
-public class PriceDiscount extends ProductDiscount {
+public class PriceDiscount extends Discount {
     private Rmb price;
 
     @Override
-    public Rmb calculate(Rmb original) {
+    public Rmb apply(Rmb original) {
         return price;
     }
 

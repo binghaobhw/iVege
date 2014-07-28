@@ -1,16 +1,27 @@
 package wbh.wilfred.ivege.model;
 
-import java.math.BigDecimal;
+public class Gift extends Promotion implements Comparable<Gift> {
+    private Product product;
+    private Quantity quantity;
 
-public class Gift extends Promotion {
-    private String productId;
-    private BigDecimal amount;
-
-    public String getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Quantity getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Quantity quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
+    public int compareTo(Gift o) {
+        return this.getCreateTime().compareTo(o.getCreateTime());
     }
 }

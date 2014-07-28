@@ -1,41 +1,36 @@
 package wbh.wilfred.ivege.model;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class Product {
-    private String id;
-    private String categoryId;
+    private long id;
+    private Category category;
     private String name;
     private String info;
     private String thumbnail;
-    private BigDecimal price;
+    private Rmb price;
     private Unit unit;
     private Status status;
     private List<String> images;
-
-    public enum Unit {
-        JIN, QUANTITY
-    }
 
     public enum Status {
         AVAILABLE, SOLD_OUT, NOT_AVAILABLE, DELETED
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public String getName() {
@@ -54,11 +49,11 @@ public class Product {
         this.info = info;
     }
 
-    public BigDecimal getPrice() {
+    public Rmb getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Rmb price) {
         this.price = price;
     }
 
@@ -92,5 +87,27 @@ public class Product {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof Product) {
+            Product x = (Product) obj;
+            if (id == x.getId() &&
+                    category.equals(x.getCategory()) &&
+                    name.equals(x.getName()) &&
+                    info.equals(x.getInfo()) &&
+                    price.equals(x.getPrice()) &&
+                    unit.equals(x.getUnit()) &&
+                    images.equals(x.getImages()) &&
+                    status.equals(x.getStatus()) &&
+                    thumbnail.equals(x.getThumbnail())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

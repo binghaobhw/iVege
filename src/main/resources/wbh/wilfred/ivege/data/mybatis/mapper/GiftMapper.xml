@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wbh.wilfred.ivege.data.mybatis.mapper.GiftMapper">
+    <resultMap id="giftMap" type="Gift">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="forAll" column="for_all"/>
+        <result property="minTotal" column="min_total"/>
+        <result property="start" column="start"/>
+        <result property="end" column="end"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="type" column="type"/>
+        <collection property="categories" column="id" select="getCategories"/>
+        <collection property="products" column="id" select="getProducts"/>
+        <discriminator javaType="int" column="_class">
+            <case value="0" resultType="FlatDiscount">
+                <result property="value" column="value"/>
+            </case>
+            <case value="1" resultType="PriceDiscount">
+                <result property="price" column="price"/>
+            </case>
+            <case value="2" resultType="RateDiscount">
+                <result property="rate" column="rate"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+    <select id="getDiscountById" resultMap="discountMap">
+        SELECT * FROM discount WHERE id = #{id} LIMIT 1
+    </select>
+
+    <select id="getDiscounts" resultMap="discountMap">
+        SELECT * FROM discount
+        <where>
+            <if test="total != null">
+                <![CDATA[
+                min_total <= #{total}
+                ]]>
+            </if>
+            <if test="dateTime != null">
+                <![CDATA[
+                AND start <= #{dateTime}
+                AND end >= #{dateTime}
+                ]]>
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getCategories" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.categoryMap">
+        SELECT
+            c.id AS id,
+            c.`name` AS `name`
+        FROM discount_category dc LEFT JOIN category c ON dc.category_id = c.id
+        WHERE dc.discount_id = #{id}
+    </select>
+
+    <select id="getProducts" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap">
+        SELECT
+            p.id as id,
+            p.`name` as `name`,
+            p.info as info,
+            p.thumbnail as thumbnail,
+            p.price as price,
+            p.unit as unit,
+            p.`status` as `status`,
+            p.images as images
+        FROM
+        discount_product dp
+        LEFT JOIN product p ON dp.product_id = p.id
+        WHERE dp.discount_id = #{id};
+    </select>
+
+    <insert id="addDiscount" parameterType="Discount" useGeneratedKeys="true"
+            keyProperty="id">
+        <choose>
+            <when test="_parameter instanceof wbh.wilfred.ivege.model.FlatDiscount">
+                INSERT INTO discount (name, for_all, min_total, start,
+                end, status, create_time, type, _class, value)
+                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
+                #{end}, #{status}, #{createTime}, #{type}, 0, #{value})
+            </when>
+            <when test="_parameter instanceof wbh.wilfred.ivege.model.PriceDiscount">
+                INSERT INTO discount (name, for_all, min_total, start,
+                end, status, create_time, type, _class, price)
+                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
+                #{end}, #{status}, #{createTime}, #{type}, 1, #{price})
+            </when>
+            <when test="_parameter instanceof wbh.wilfred.ivege.model.RateDiscount">
+                INSERT INTO discount (name, for_all, min_total, start,
+                end, status, create_time, type, _class, rate)
+                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
+                #{end}, #{status}, #{createTime}, #{type}, 2, #{rate})
+            </when>
+        </choose>
+    </insert>
+
+    <insert id="addDiscountCategory" parameterType="Map">
+        INSERT INTO discount_category (discount_id, category_id)
+        VALUES
+        <foreach collection="categories" item="item" index="index"
+                 separator=",">
+            (#{discountId}, #{item.id})
+        </foreach>
+    </insert>
+
+    <insert id="addDiscountProduct" parameterType="Map">
+        INSERT INTO discount_product (discount_id, product_id)
+        VALUES
+        <foreach collection="products" item="item" index="index"
+                 separator=",">
+            (#{discountId}, #{item.id})
+        </foreach>
+    </insert>
+
+    <update id="updateDiscount" parameterType="Discount">
+        UPDATE discount
+        <set>
+            <if test="start != null">start = #{start},</if>
+            <if test="end != null">end = #{end},</if>
+            <if test="status != null">status = #{status}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+</mapper>

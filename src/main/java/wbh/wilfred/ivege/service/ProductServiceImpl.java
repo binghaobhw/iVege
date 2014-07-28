@@ -22,6 +22,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void updateProduct(Product product) {
-        productMapper.updateProduct(product);
+//        productMapper.updateProduct(product);
     }
 }

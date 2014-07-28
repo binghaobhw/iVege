@@ -18,31 +18,31 @@ public class RmbTest {
     public void testPlus() throws Exception {
         Rmb a = new Rmb("11.08");
         Rmb b = new Rmb("22.5");
-        assertTrue(a.plus(b).equalTo(new Rmb("33.5")));
+        assertTrue(a.plus(b).equals(new Rmb("33.5")));
     }
 
     @Test
     public void testMinus() throws Exception {
         Rmb a = new Rmb("22.5");
         Rmb b = new Rmb("3.0");
-        assertTrue(a.minus(b).equalTo(new Rmb("19.5")));
+        assertTrue(a.minus(b).equals(new Rmb("19.5")));
     }
 
     @Test
     public void testTimes() throws Exception {
-        assertTrue(new Rmb("1.5").times(new BigDecimal("1.5")).equalTo(new
+        assertTrue(new Rmb("1.5").times(new BigDecimal("1.5")).equals(new
                 Rmb("2.3")));
-        assertTrue(new Rmb("1.9").times(new BigDecimal("1.9")).equalTo(new
+        assertTrue(new Rmb("1.9").times(new BigDecimal("1.9")).equals(new
                 Rmb("3.6")));
-        assertTrue(new Rmb("10.5").times(new BigDecimal("0.85")).equalTo(new
+        assertTrue(new Rmb("10.5").times(new BigDecimal("0.85")).equals(new
                 Rmb("8.9")));
     }
 
     @Test
     public void testDividedBy() throws Exception {
-        assertTrue(new Rmb("2.2").dividedBy(new BigDecimal("1.5")).equalTo
+        assertTrue(new Rmb("2.2").dividedBy(new BigDecimal("1.5")).equals
                 (new Rmb("1.5")));
-        assertTrue(new Rmb("4.3").dividedBy(new BigDecimal("0.85")).equalTo
+        assertTrue(new Rmb("4.3").dividedBy(new BigDecimal("0.85")).equals
                 (new Rmb("5.1")));
     }
 
