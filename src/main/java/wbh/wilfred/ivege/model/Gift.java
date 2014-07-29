@@ -1,8 +1,11 @@
 package wbh.wilfred.ivege.model;
 
+import java.math.BigDecimal;
+
 public class Gift extends Promotion implements Comparable<Gift> {
     private Product product;
-    private Quantity quantity;
+    private BigDecimal quantity;
+    private Unit unit;
 
     public Product getProduct() {
         return product;
@@ -12,16 +15,24 @@ public class Gift extends Promotion implements Comparable<Gift> {
         this.product = product;
     }
 
-    public Quantity getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Quantity quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 
     @Override
     public int compareTo(Gift o) {
         return this.getCreateTime().compareTo(o.getCreateTime());
+    }
+
+    public Unit getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Unit unit) {
+        this.unit = unit;
     }
 }

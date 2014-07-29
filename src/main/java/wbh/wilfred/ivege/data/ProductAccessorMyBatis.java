@@ -19,6 +19,11 @@ public class ProductAccessorMyBatis implements ProductAccessor {
     }
 
     @Override
+    public List<Product> getProductsByIds(List<Long> ids) {
+        return productMapper.getProductsByIds(ids);
+    }
+
+    @Override
     public long addProduct(Product product) {
         productMapper.addProduct(product);
         return product.getId();

@@ -2,122 +2,109 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="wbh.wilfred.ivege.data.mybatis.mapper.GiftMapper">
     <resultMap id="giftMap" type="Gift">
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="forAll" column="for_all"/>
-        <result property="minTotal" column="min_total"/>
-        <result property="start" column="start"/>
-        <result property="end" column="end"/>
-        <result property="status" column="status"/>
-        <result property="createTime" column="create_time"/>
-        <result property="type" column="type"/>
-        <collection property="categories" column="id" select="getCategories"/>
-        <collection property="products" column="id" select="getProducts"/>
-        <discriminator javaType="int" column="_class">
-            <case value="0" resultType="FlatDiscount">
-                <result property="value" column="value"/>
-            </case>
-            <case value="1" resultType="PriceDiscount">
-                <result property="price" column="price"/>
-            </case>
-            <case value="2" resultType="RateDiscount">
-                <result property="rate" column="rate"/>
-            </case>
-        </discriminator>
+        <id property="id" column="g_id"/>
+        <result property="name" column="g_name"/>
+        <result property="forAll" column="g_for_all"/>
+        <result property="minTotal" column="g_min_total"/>
+        <result property="start" column="g_start"/>
+        <result property="end" column="g_end"/>
+        <result property="status" column="g_status"/>
+        <result property="createTime" column="g_create_time"/>
+        <result property="quantity" column="g_quantity"/>
+        <result property="unit" column="g_unit"/>
+        <association property="product" javaType="Product" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap"/>
+        <collection property="categories" column="g_id" select="getCategories"/>
+        <collection property="products" column="g_id" select="getProducts"/>
     </resultMap>
 
-    <select id="getDiscountById" resultMap="discountMap">
-        SELECT * FROM discount WHERE id = #{id} LIMIT 1
+    <sql id="columns">
+        g.`id` AS g_id,
+        g.`name` AS g_name,
+        g.`for_all` AS g_for_all,
+        g.`min_total` AS g_min_total,
+        g.`start` AS g_start,
+        g.`end` AS g_end,
+        g.`status` AS g_status,
+        g.`create_time` AS g_create_time,
+        g.`quantity` AS g_quantity,
+        g.`unit` AS g_unit,
+        <include refid="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.columns"/>
+    </sql>
+
+    <select id="getCategories" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.categoryMap">
+        SELECT <include refid="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.columns"/>
+        FROM gift_category gc LEFT JOIN category c ON c.`id` = gc.`category_id`
+        WHERE gc.`gift_id` = #{id}
     </select>
 
-    <select id="getDiscounts" resultMap="discountMap">
-        SELECT * FROM discount
+    <select id="getProducts" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap">
+        SELECT <include
+            refid="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.columns"/>
+        FROM gift_product gp
+        LEFT JOIN product p ON p.`id` = gp.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
+        WHERE gp.`gift_id` = #{id};
+    </select>
+
+    <select id="getGiftById" resultMap="giftMap">
+        SELECT <include refid="columns"/>
+        FROM gift g
+        LEFT JOIN product p ON p.`id` = g.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
+        WHERE g.`id` = #{id} LIMIT 1
+    </select>
+
+    <select id="getGifts" resultMap="giftMap">
+        SELECT <include refid="columns"/>
+        FROM gift g
+        LEFT JOIN product p ON p.`id` = g.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
         <where>
             <if test="total != null">
                 <![CDATA[
-                min_total <= #{total}
+                g.`min_total` <= #{total}
                 ]]>
             </if>
             <if test="dateTime != null">
                 <![CDATA[
-                AND start <= #{dateTime}
-                AND end >= #{dateTime}
+                AND g.`start` <= #{dateTime}
+                AND g.`end` >= #{dateTime}
                 ]]>
             </if>
             <if test="status != null">
-                AND status = #{status}
+                AND g.`status` = #{status}
             </if>
         </where>
     </select>
     
-    <select id="getCategories" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.categoryMap">
-        SELECT
-            c.id AS id,
-            c.`name` AS `name`
-        FROM discount_category dc LEFT JOIN category c ON dc.category_id = c.id
-        WHERE dc.discount_id = #{id}
-    </select>
-
-    <select id="getProducts" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap">
-        SELECT
-            p.id as id,
-            p.`name` as `name`,
-            p.info as info,
-            p.thumbnail as thumbnail,
-            p.price as price,
-            p.unit as unit,
-            p.`status` as `status`,
-            p.images as images
-        FROM
-        discount_product dp
-        LEFT JOIN product p ON dp.product_id = p.id
-        WHERE dp.discount_id = #{id};
-    </select>
-
-    <insert id="addDiscount" parameterType="Discount" useGeneratedKeys="true"
+    <insert id="addGift" parameterType="Gift" useGeneratedKeys="true"
             keyProperty="id">
-        <choose>
-            <when test="_parameter instanceof wbh.wilfred.ivege.model.FlatDiscount">
-                INSERT INTO discount (name, for_all, min_total, start,
-                end, status, create_time, type, _class, value)
-                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
-                #{end}, #{status}, #{createTime}, #{type}, 0, #{value})
-            </when>
-            <when test="_parameter instanceof wbh.wilfred.ivege.model.PriceDiscount">
-                INSERT INTO discount (name, for_all, min_total, start,
-                end, status, create_time, type, _class, price)
-                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
-                #{end}, #{status}, #{createTime}, #{type}, 1, #{price})
-            </when>
-            <when test="_parameter instanceof wbh.wilfred.ivege.model.RateDiscount">
-                INSERT INTO discount (name, for_all, min_total, start,
-                end, status, create_time, type, _class, rate)
-                VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
-                #{end}, #{status}, #{createTime}, #{type}, 2, #{rate})
-            </when>
-        </choose>
+        INSERT INTO gift (name, for_all, min_total, start,
+        end, status, create_time, product_id, quantity, unit)
+        VALUES (#{name}, #{forAll}, #{minTotal}, #{start},
+        #{end}, #{status}, #{createTime}, #{product.id}, #{quantity}, #{unit})
     </insert>
 
-    <insert id="addDiscountCategory" parameterType="Map">
-        INSERT INTO discount_category (discount_id, category_id)
+    <insert id="addGiftCategory" parameterType="Map">
+        INSERT INTO gift_category (gift_id, category_id)
         VALUES
         <foreach collection="categories" item="item" index="index"
                  separator=",">
-            (#{discountId}, #{item.id})
+            (#{giftId}, #{item.id})
         </foreach>
     </insert>
 
-    <insert id="addDiscountProduct" parameterType="Map">
-        INSERT INTO discount_product (discount_id, product_id)
+    <insert id="addGiftProduct" parameterType="Map">
+        INSERT INTO gift_product (gift_id, product_id)
         VALUES
         <foreach collection="products" item="item" index="index"
                  separator=",">
-            (#{discountId}, #{item.id})
+            (#{giftId}, #{item.id})
         </foreach>
     </insert>
 
-    <update id="updateDiscount" parameterType="Discount">
-        UPDATE discount
+    <update id="updateGift" parameterType="Gift">
+        UPDATE gift
         <set>
             <if test="start != null">start = #{start},</if>
             <if test="end != null">end = #{end},</if>

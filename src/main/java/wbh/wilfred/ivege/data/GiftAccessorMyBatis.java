@@ -1,12 +1,16 @@
 package wbh.wilfred.ivege.data;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import wbh.wilfred.ivege.data.mybatis.mapper.GiftMapper;
 import wbh.wilfred.ivege.model.Gift;
 import wbh.wilfred.ivege.model.selector.GiftSelector;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class GiftAccessorMyBatis implements GiftAccessor {
@@ -20,8 +24,24 @@ public class GiftAccessorMyBatis implements GiftAccessor {
 
     @Override
     public long addGift(Gift gift) {
+        gift.setCreateTime(DateTime.now());
         giftMapper.addGift(gift);
-        return gift.getId();
+        long giftId = gift.getId();
+        if (!gift.isForAll()) {
+            if (CollectionUtils.isNotEmpty(gift.getCategories())) {
+                Map<String, Object> dc = new HashMap<String, Object>();
+                dc.put("giftId", giftId);
+                dc.put("categories", gift.getCategories());
+                giftMapper.addGiftCategory(dc);
+            }
+            if (CollectionUtils.isNotEmpty(gift.getProducts())) {
+                Map<String, Object> dp = new HashMap<String, Object>();
+                dp.put("giftId", giftId);
+                dp.put("products", gift.getProducts());
+                giftMapper.addGiftProduct(dp);
+            }
+        }
+        return giftId;
     }
 
     @Override
