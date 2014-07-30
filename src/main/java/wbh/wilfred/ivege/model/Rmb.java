@@ -53,10 +53,6 @@ public class Rmb implements Comparable<Rmb> {
         return new Rmb(dividedByScaleAndRound(product, scale));
     }
 
-    public Rmb times(Quantity multiplier) {
-        return times(multiplier.getValue());
-    }
-
     public static long dividedByScaleAndRound(long val, int scale) {
         if (val == 0L) {
             return val;

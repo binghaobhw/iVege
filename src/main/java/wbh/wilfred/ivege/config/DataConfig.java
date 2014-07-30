@@ -14,6 +14,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import wbh.wilfred.ivege.data.mybatis.typehandler.DateTimeTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.DiscountTypeHandler;
+import wbh.wilfred.ivege.data.mybatis.typehandler.OrderSourceTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.OrderStatusTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.ProductStatusTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.PromotionStatusTypeHandler;
@@ -70,7 +71,8 @@ public class DataConfig {
                 new UnitTypeHandler(),
                 new PromotionStatusTypeHandler(),
                 new ProductStatusTypeHandler(),
-                new DiscountTypeHandler()
+                new DiscountTypeHandler(),
+                new OrderSourceTypeHandler()
         };
         sqlSessionFactory.setTypeHandlers(typeHandlers);
         return sqlSessionFactory.getObject();

@@ -6,11 +6,11 @@ import wbh.wilfred.ivege.model.Order;
 import java.math.BigDecimal;
 
 public class OrderSelector {
-    String address;
     String name;
+    String address;
     String phone;
-    BigDecimal minAmount;
-    BigDecimal maxAmount;
+    BigDecimal minTotal;
+    BigDecimal maxTotal;
     DateTime startCreateTime;
     DateTime endCreateTime;
     DateTime startDeliverTime;
@@ -18,6 +18,7 @@ public class OrderSelector {
     DateTime startCompleteTime;
     DateTime endCompleteTime;
     Order.Status status;
+    Order.Source source;
 
     public String getName() {
         return name;
@@ -43,20 +44,20 @@ public class OrderSelector {
         this.phone = phone;
     }
 
-    public BigDecimal getMinAmount() {
-        return minAmount;
+    public BigDecimal getMinTotal() {
+        return minTotal;
     }
 
-    public void setMinAmount(BigDecimal minAmount) {
-        this.minAmount = minAmount;
+    public void setMinTotal(BigDecimal minTotal) {
+        this.minTotal = minTotal;
     }
 
-    public BigDecimal getMaxAmount() {
-        return maxAmount;
+    public BigDecimal getMaxTotal() {
+        return maxTotal;
     }
 
-    public void setMaxAmount(BigDecimal maxAmount) {
-        this.maxAmount = maxAmount;
+    public void setMaxTotal(BigDecimal maxTotal) {
+        this.maxTotal = maxTotal;
     }
 
     public DateTime getStartCreateTime() {
@@ -113,5 +114,13 @@ public class OrderSelector {
 
     public void setStatus(Order.Status status) {
         this.status = status;
+    }
+
+    public Order.Source getSource() {
+        return source;
+    }
+
+    public void setSource(Order.Source source) {
+        this.source = source;
     }
 }

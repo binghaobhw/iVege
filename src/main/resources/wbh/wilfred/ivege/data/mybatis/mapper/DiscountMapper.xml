@@ -2,76 +2,85 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper">
     <resultMap id="discountMap" type="Discount">
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="forAll" column="for_all"/>
-        <result property="minTotal" column="min_total"/>
-        <result property="start" column="start"/>
-        <result property="end" column="end"/>
-        <result property="status" column="status"/>
-        <result property="createTime" column="create_time"/>
-        <result property="type" column="type"/>
-        <collection property="categories" column="id" select="getCategories"/>
-        <collection property="products" column="id" select="getProducts"/>
-        <discriminator javaType="int" column="_class">
+        <id property="id" column="d_id"/>
+        <result property="name" column="d_name"/>
+        <result property="forAll" column="d_for_all"/>
+        <result property="minTotal" column="d_min_total"/>
+        <result property="start" column="d_start"/>
+        <result property="end" column="d_end"/>
+        <result property="status" column="d_status"/>
+        <result property="createTime" column="d_create_time"/>
+        <result property="type" column="d_type"/>
+        <collection property="categories" column="d_id" select="getCategories"/>
+        <collection property="products" column="d_id" select="getProducts"/>
+        <discriminator javaType="int" column="d_class">
             <case value="0" resultType="FlatDiscount">
-                <result property="value" column="value"/>
+                <result property="value" column="d_value"/>
             </case>
             <case value="1" resultType="PriceDiscount">
-                <result property="price" column="price"/>
+                <result property="price" column="d_price"/>
             </case>
             <case value="2" resultType="RateDiscount">
-                <result property="rate" column="rate"/>
+                <result property="rate" column="d_rate"/>
             </case>
         </discriminator>
     </resultMap>
 
+    <sql id="columns">
+        d.`id` AS d_id,
+        d.`_class` AS d_class,
+        d.`name` AS d_name,
+        d.`for_all` AS d_for_all,
+        d.`min_total` AS d_min_total,
+        d.`start` AS d_start,
+        d.`end` AS d_end,
+        d.`status` AS d_status,
+        d.`create_time` AS d_create_time,
+        d.`type` AS d_type,
+        d.`value` AS d_value,
+        d.`price` AS d_price,
+        d.`rate` AS d_rate
+    </sql>
+
     <select id="getDiscountById" resultMap="discountMap">
-        SELECT * FROM discount WHERE id = #{id} LIMIT 1
+        SELECT <include refid="columns"/>
+        FROM discount d WHERE d.`id` = #{id} LIMIT 1
     </select>
 
     <select id="getDiscounts" resultMap="discountMap">
-        SELECT * FROM discount
+        SELECT <include refid="columns"/>
+        FROM discount d
         <where>
             <if test="total != null">
                 <![CDATA[
-                min_total <= #{total}
+                d.`min_total` <= #{total}
                 ]]>
             </if>
             <if test="dateTime != null">
                 <![CDATA[
-                AND start <= #{dateTime}
-                AND end >= #{dateTime}
+                AND d.`start` <= #{dateTime}
+                AND d.`end` >= #{dateTime}
                 ]]>
             </if>
             <if test="status != null">
-                AND status = #{status}
+                AND d.`status` = #{status}
             </if>
         </where>
     </select>
     
     <select id="getCategories" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.categoryMap">
-        SELECT
-            c.id AS id,
-            c.`name` AS `name`
-        FROM discount_category dc LEFT JOIN category c ON dc.category_id = c.id
-        WHERE dc.discount_id = #{id}
+        SELECT <include refid="wbh.wilfred.ivege.data.mybatis.mapper.CategoryMapper.columns"/>
+        FROM discount_category dc LEFT JOIN category c ON dc.`category_id` = c.`id`
+        WHERE dc.`discount_id` = #{id}
     </select>
 
     <select id="getProducts" resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap">
-        SELECT
-            p.id as id,
-            p.`name` as `name`,
-            p.info as info,
-            p.thumbnail as thumbnail,
-            p.price as price,
-            p.unit as unit,
-            p.`status` as `status`,
-            p.images as images
-        FROM
-        discount_product dp
-        LEFT JOIN product p ON dp.product_id = p.id
-        WHERE dp.discount_id = #{id};
+        SELECT <include
+            refid="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.columns"/>
+        FROM discount_product dp
+        LEFT JOIN product p ON p.`id` = dp.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
+        WHERE dp.`discount_id` = #{id};
     </select>
 
     <insert id="addDiscount" parameterType="Discount" useGeneratedKeys="true"

@@ -13,7 +13,6 @@ import wbh.wilfred.ivege.model.selector.ProductSelector;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 import static org.junit.Assert.assertEquals;
@@ -22,19 +21,17 @@ import static org.junit.Assert.assertNotEquals;
 public class ProductAccessorMyBatisTest extends AccessorTest {
     @Autowired
     private ProductAccessor productAccessor;
-    private static final String TABLE = "product";
-    private static final String REFERENCED_TABLE = "category";
     private List<Product> expected;
 
     @Before
     public void setUp() throws Exception {
-        Operation operation = sequenceOf(deleteAllFrom(TABLE, REFERENCED_TABLE),
-                insertInto(REFERENCED_TABLE)
+        Operation operation = sequenceOf(
+                insertInto(CATEGORY)
                         .columns("id", "name")
                         .values(1L, "有机蔬菜")
                         .values(2L, "面点")
                         .build(),
-                insertInto(TABLE)
+                insertInto(PRODUCT)
                         .columns("id", "category_id", "name", "info",
                                 "thumbnail", "price", "unit", "status", "images")
                         .values(1L, 1L, "豆芽", "营养丰富", "123/1.jpg", "25", 0,

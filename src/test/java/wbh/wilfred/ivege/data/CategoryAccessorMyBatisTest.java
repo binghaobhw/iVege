@@ -8,7 +8,6 @@ import wbh.wilfred.ivege.model.Category;
 
 import java.util.List;
 
-import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 import static org.junit.Assert.assertEquals;
@@ -19,12 +18,10 @@ public class CategoryAccessorMyBatisTest extends AccessorTest {
     @Autowired
     private CategoryAccessor categoryAccessor;
 
-    private static final String TABLE = "category";
-
     @Before
     public void setUp() throws Exception {
-        Operation operation = sequenceOf(deleteAllFrom(TABLE),
-                insertInto(TABLE)
+        Operation operation = sequenceOf(
+                insertInto(CATEGORY)
                         .columns("id", "name")
                         .values(1L, "有机蔬菜")
                         .values(2L, "面点")

@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import wbh.wilfred.ivege.model.Order;
@@ -27,13 +26,8 @@ public class OrderController {
 
     @RequestMapping(value = "/orders", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addOrder(@RequestBody Order order,
-                         @RequestParam boolean confirmed) {
-        if (confirmed) {
-            orderService.addConfirmedOrder(order);
-        } else {
-            orderService.addUnconfirmedOrder(order);
-        }
+    public void addOrder(@RequestBody Order order) {
+        orderService.addOrder(order);
     }
 
     @RequestMapping(value = "/orders", method = RequestMethod.GET)
@@ -44,7 +38,6 @@ public class OrderController {
     @RequestMapping(value = "/orders/{id}", method = RequestMethod.PUT)
     public Order updateOrder(@PathVariable String id, @RequestBody Order order) {
         if (order.getStatus() == Order.Status.CONFIRMED) {
-            return orderService.calculateOrder(order);
         }
         orderService.updateOrder(order);
         return order;

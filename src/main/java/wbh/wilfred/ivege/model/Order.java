@@ -19,9 +19,15 @@ public class Order {
     private Status status;
     private Discount discount;
     private Gift gift;
+    private Source source;
+    private String ext;
 
     public enum Status {
         UNCONFIRMED, CONFIRMED, DELIVERING, COMPLETED, CANCELED
+    }
+
+    public enum Source {
+        PHONE, WECHET, SHOP
     }
 
     public Rmb getTotal() {
@@ -146,5 +152,21 @@ public class Order {
 
     public void setGift(Gift gift) {
         this.gift = gift;
+    }
+
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
     }
 }

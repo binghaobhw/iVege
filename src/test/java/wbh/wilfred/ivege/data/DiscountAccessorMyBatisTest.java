@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ninja_squad.dbsetup.Operations.deleteAllFrom;
 import static com.ninja_squad.dbsetup.Operations.insertInto;
 import static com.ninja_squad.dbsetup.Operations.sequenceOf;
 import static org.junit.Assert.assertEquals;
@@ -28,17 +27,10 @@ import static org.junit.Assert.assertNotNull;
 public class DiscountAccessorMyBatisTest extends AccessorTest {
     @Autowired
     private DiscountAccessor discountAccessor;
-    private static final String DISCOUNT = "discount";
-    private static final String PRODUCT = "product";
-    private static final String CATEGORY = "category";
-    private static final String DISCOUNT_CATEGORY = "discount_category";
-    private static final String DISCOUNT_PRODUCT = "discount_product";
+
     @Before
     public void setUp() throws Exception {
-        Operation operation = sequenceOf(deleteAllFrom(DISCOUNT_CATEGORY,
-                        DISCOUNT_PRODUCT,
-                        DISCOUNT,
-                        PRODUCT, CATEGORY),
+        Operation operation = sequenceOf(
                 insertInto(CATEGORY)
                         .columns("id", "name")
                         .values(1L, "有机蔬菜")

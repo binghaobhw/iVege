@@ -61,8 +61,8 @@ public class OrderServiceImplTest {
         orderSelector.setEndDeliverTime(new DateTime("2014-07-05"));
         orderSelector.setAddress("lands");
         orderSelector.setEndCompleteTime(new DateTime("2014-07-06"));
-        orderSelector.setMinAmount(new BigDecimal("11.5"));
-        orderSelector.setMaxAmount(new BigDecimal("15"));
+        orderSelector.setMinTotal(new BigDecimal("11.5"));
+        orderSelector.setMaxTotal(new BigDecimal("15"));
         orderSelector.setName("yeah");
         orderSelector.setStartDeliverTime(new DateTime("2014-07-07"));
         orderSelector.setStartCompleteTime(new DateTime("2014-06-04"));

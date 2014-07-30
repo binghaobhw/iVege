@@ -2,80 +2,210 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="wbh.wilfred.ivege.data.mybatis.mapper.OrderMapper">
     <resultMap id="orderMap" type="Order">
-        <id property="id" column="id"/>
-        <result property="name" column="name"/>
-        <result property="phone" column="phone"/>
-        <result property="address" column="address"/>
-        <result property="originalTotal" column="original_total"/>
-        <result property="total" column="total"/>
-        <result property="createTime" column="create_time"/>
-        <result property="deliverTime" column="deliver_time"/>
-        <result property="completeTime" column="complete_time"/>
-        <result property="status" column="status"/>
+        <id property="id" column="o_id"/>
+        <result property="name" column="o_name"/>
+        <result property="phone" column="o_phone"/>
+        <result property="address" column="o_address"/>
+        <result property="originalTotal" column="o_original_total"/>
+        <result property="total" column="o_total"/>
+        <result property="createTime" column="o_create_time"/>
+        <result property="deliverTime" column="o_deliver_time"/>
+        <result property="completeTime" column="o_complete_time"/>
+        <result property="status" column="o_status"/>
+        <result property="source" column="o_source"/>
+        <result property="ext" column="o_ext"/>
         <association property="discount" javaType="Discount"
-                     columnPrefix="d_"
                      resultMap="wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper.discountMap">
         </association>
-        <collection property="items" ofType="OrderItem" column="id"
-                    select="wbh.wilfred.ivege.data.mybatis.mapper.OrderItemMapper.getOrderItemByOrderId"/>
+        <association property="gift" javaType="Gift"
+                     resultMap="wbh.wilfred.ivege.data.mybatis.mapper.GiftMapper.giftMap">
+        </association>
+        <collection property="items" ofType="OrderItem" column="o_id"
+                    select="getOrderItemByOrderId"/>
     </resultMap>
+
+    <resultMap id="orderItemMap" type="OrderItem">
+        <id property="id" column="oi_id"/>
+        <result property="userQuantity" column="oi_user_quantity"/>
+        <result property="userUnit" column="oi_user_unit"/>
+        <result property="quantity" column="oi_quantity"/>
+        <result property="unit" column="oi_unit"/>
+        <result property="price" column="oi_price"/>
+        <result property="subtotal" column="oi_subtotal"/>
+        <association property="product" javaType="Product"
+                     resultMap="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.productMap"/>
+        <association property="discount" javaType="Discount"
+                     resultMap="wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper.discountMap"/>
+    </resultMap>
+
+    <sql id="columns">
+        o.`id` AS o_id,
+        o.`name` AS o_name,
+        o.`phone` AS o_phone,
+        o.`address` AS o_address,
+        o.`original_total` AS o_original_total,
+        o.`total` AS o_total,
+        o.`create_time` AS o_create_time,
+        o.`deliver_time` AS o_deliver_time,
+        o.`complete_time` AS o_complete_time,
+        o.`status` AS o_status,
+        o.`source` AS o_source,
+        o.`ext` AS o_ext,
+        <include refid="wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper.columns"/>
+        ,
+        <include refid="wbh.wilfred.ivege.data.mybatis.mapper.GiftMapper.columns"/>
+    </sql>
+
+    <sql id="orderItemColumns">
+        oi.`id` AS oi_id,
+        oi.`user_quantity` AS oi_user_quantity,
+        oi.`user_unit` AS oi_user_unit,
+        oi.`quantity` AS oi_quantity,
+        oi.`unit` AS oi_unit,
+        oi.`price` AS oi_price,
+        oi.`subtotal` AS oi_subtotal,
+        <include refid="wbh.wilfred.ivege.data.mybatis.mapper.ProductMapper.columns"/>
+        ,
+        <include refid="wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper.columns"/>
+    </sql>
+
     <select id="getOrderById" resultMap="orderMap">
-        SELECT * FROM `order` WHERE id = #{id} LIMIT 1
+        SELECT <include refid="columns"/>
+        FROM `order` o
+        LEFT JOIN discount d ON d.`id` = o.`discount_id`
+        LEFT JOIN gift g ON g.`id` = o.`gift_id`
+        LEFT JOIN product p ON p.`id` = g.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
+        WHERE o.`id` = #{id} LIMIT 1
     </select>
+
+    <select id="getOrderItemByOrderId" resultMap="orderItemMap">
+        SELECT <include refid="orderItemColumns"/>
+        FROM order_item oi
+        LEFT JOIN product p ON p.`id` = oi.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
+        LEFT JOIN discount d ON d.`id` = oi.`discount_id`
+        WHERE oi.`order_id` = #{id}
+    </select>
+
     <insert id="addOrder" parameterType="Order" useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO `order` (address, `name`, phone, originalTotal,
-        creation_time, delivery_time, `status`)
-        VALUES (#{address}, #{name}, #{phone}, #{originalTotal}, now(),
-        #{deliverTime}, #{status})
+        INSERT INTO `order` (`name`, `phone`, `address`, `original_total`,
+        `total`, `create_time`, `deliver_time`, `status`,
+        `discount_id`, `gift_id`, `source`, `ext`)
+        VALUES (#{name}, #{phone}, #{address}, #{originalTotal}, #{total},
+        #{createTime}, #{deliverTime}, #{status}, #{discount.id},
+        #{gift.id}, #{source}, #{ext})
     </insert>
+
+    <insert id="addOrderItems" parameterType="Map">
+        INSERT INTO `order_item` (
+            `id`,
+            `order_id`,
+            `product_id`,
+            `discount_id`,
+            `user_quantity`,
+            `user_unit`,
+            `quantity`,
+            `unit`,
+            `price`,
+            `subtotal`
+        ) VALUES
+        <foreach collection="orderItems" item="item" index="index"
+                 separator=",">
+            (#{item.id}, #{orderId}, #{item.product.id}, #{item.discount.id}, #{item.userQuantity},
+            #{item.userUnit}, #{item.quantity}, #{item.unit}, #{item.price}, #{item.subtotal})
+        </foreach>
+    </insert>
+
     <select id="getOrders" resultMap="orderMap">
-        SELECT * FROM `order`
+        SELECT <include refid="columns"/>
+        FROM `order` o
+        LEFT JOIN discount d ON d.`id` = o.`discount_id`
+        LEFT JOIN gift g ON g.`id` = o.`gift_id`
+        LEFT JOIN product p ON p.`id` = g.`product_id`
+        LEFT JOIN category c ON c.`id` = p.`category_id`
         <where>
-            <if test="address != null">
-                address = #{address}
-            </if>
             <if test="name != null">
-                AND name = #{name}
+                AND o.`name` = #{name}
             </if>
             <if test="phone != null">
-                AND phone = #{phone}
+                AND o.`phone` = #{phone}
+            </if>
+            <if test="address != null">
+                o.`address` = #{address}
             </if>
             <if test="minTotal != null">
-                AND originalTotal >= #{minTotal}
+                AND o.`total` >= #{minTotal}
             </if>
             <if test="maxTotal != null">
                 <![CDATA[
-                AND originalTotal <= #{maxTotal}
+                AND o.`total` <= #{maxTotal}
                 ]]>
             </if>
             <if test="startCreateTime != null">
-                AND creation_time >= #{startCreateTime}
+                AND o.`create_time` >= #{startCreateTime}
             </if>
             <if test="endCreateTime != null">
                 <![CDATA[
-                AND creation_time <= #{endCreateTime}
+                AND o.`create_time` <= #{endCreateTime}
                 ]]>
             </if>
             <if test="startDeliverTime != null">
-                AND delivery_time >= #{startDeliverTime}
+                AND o.`deliver_time` >= #{startDeliverTime}
             </if>
             <if test="endDeliverTime != null">
                 <![CDATA[
-                AND delivery_time <= #{endDeliverTime}
+                AND o.`deliver_time` <= #{endDeliverTime}
                 ]]>
             </if>
             <if test="startCompleteTime != null">
-                AND completion_time >= #{startCompleteTime}
+                AND o.`complete_time` >= #{startCompleteTime}
             </if>
             <if test="endCompleteTime != null">
                 <![CDATA[
-                AND completion_time <= #{endCompleteTime}
+                AND o.`complete_time` <= #{endCompleteTime}
                 ]]>
             </if>
             <if test="status != null">
-                AND status = #{status}
+                AND o.`status` = #{status}
+            </if>
+            <if test="source != null">
+                AND o.`source` = #{source}
             </if>
         </where>
     </select>
+
+    <update id="updateOrder" parameterType="Order">
+        UPDATE `order`
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="originalTotal != null">original_total =
+                #{originalTotal},</if>
+            <if test="total != null">total = #{total},</if>
+            <if test="deliverTime != null">deliver_time = #{deliverTime},</if>
+            <if test="completeTime != null">complete_time =
+                #{completeTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="discount and discount.id != null">discount_id =
+                #{discount.id},</if>
+            <if test="gift and gift.id != null">gift_id = #{gift.id}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateOrderItem" parameterType="OrderItem">
+        UPDATE order_item
+        <set>
+            <if test="discount and discount.id != null">discount_id =
+                #{discount.id},</if>
+            <if test="quantity != null">quantity = #{quantity},</if>
+            <if test="unit != null">unit = #{unit},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="subtotal != null">subtotal = #{subtotal}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
 </mapper>
