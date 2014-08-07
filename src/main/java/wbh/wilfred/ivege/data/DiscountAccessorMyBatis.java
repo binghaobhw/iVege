@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import wbh.wilfred.ivege.data.mybatis.mapper.DiscountMapper;
 import wbh.wilfred.ivege.model.Discount;
+import wbh.wilfred.ivege.model.Promotion;
 import wbh.wilfred.ivege.model.selector.DiscountSelector;
 
 import java.util.HashMap;
@@ -56,11 +57,19 @@ public class DiscountAccessorMyBatis implements DiscountAccessor {
 
     @Override
     public List<Discount> getInTimeOrderDiscounts(DateTime dateTime) {
-        return null;
+        DiscountSelector selector = new DiscountSelector();
+        selector.setDateTime(dateTime);
+        selector.setType(Discount.Type.ORDER);
+        selector.setStatus(Promotion.Status.ACTIVE);
+        return discountMapper.getDiscounts(selector);
     }
 
     @Override
     public List<Discount> getInTimeProductDiscounts(DateTime dateTime) {
-        return null;
+        DiscountSelector selector = new DiscountSelector();
+        selector.setDateTime(dateTime);
+        selector.setType(Discount.Type.PRODUCT);
+        selector.setStatus(Promotion.Status.ACTIVE);
+        return discountMapper.getDiscounts(selector);
     }
 }

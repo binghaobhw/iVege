@@ -65,4 +65,8 @@
             </if>
         </where>
     </select>
+
+    <update id="updateProduct">
+
+    </update>
 </mapper>

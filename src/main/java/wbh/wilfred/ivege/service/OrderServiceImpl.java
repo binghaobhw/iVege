@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderAccessor orderAccessor;
@@ -47,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
 
     // Fill in the essential fields of saved order, then update
     @Override
+    @Transactional
     public void confirmOrder(Order order) {
         Order savedOrder = orderAccessor.getOrderById(order.getId());
         for (OrderItem savedItem: savedOrder.getItems()) {
@@ -62,8 +62,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void updateOrder(Order order) {
         orderAccessor.updateOrder(order);
+    }
+
+    @Override
+    public void completeOrder(Order order) {
+        Order o = new Order();
+        o.setId(order.getId());
+        o.setCompleteTime(DateTime.now());
+        orderAccessor.updateOrder(o);
     }
 
     private Order calculateTotal(Order order) {
@@ -113,7 +122,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Order processConfirmedOrder(Order order) {
-        order.setCreateTime(DateTime.now());
+        if (order.getCreateTime() == null) {
+            order.setCreateTime(DateTime.now());
+        }
         calculateProductDiscount(order);
         calculateTotal(order);
         calculateOrderDiscount(order);
@@ -153,6 +164,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Order addOrder(Order order) {
         boolean confirmed = true;
         // Check if userUnit == product.unit

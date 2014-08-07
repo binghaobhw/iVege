@@ -118,6 +118,7 @@ public class Rmb implements Comparable<Rmb> {
         return compareTo(rmb) <= 0;
     }
 
+    @Override
     public String toString() {
         return String.valueOf(jiao / 10) + '.' + jiao % 10;
     }

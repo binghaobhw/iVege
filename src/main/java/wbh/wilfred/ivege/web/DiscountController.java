@@ -27,31 +27,16 @@ public class DiscountController {
         return discountService.addDiscount(flatDiscount);
     }
 
-    @RequestMapping(value = "/flat-discounts", method = RequestMethod.GET)
-    public List<FlatDiscount> getFlatDiscounts(DiscountSelector discountSelector) {
-        return discountService.getFlatDiscounts(discountSelector);
-    }
-
     @RequestMapping(value = "/price-discounts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long addPriceDiscount(@RequestBody PriceDiscount priceDiscount) {
         return discountService.addDiscount(priceDiscount);
     }
 
-    @RequestMapping(value = "/price-discounts", method = RequestMethod.GET)
-    public List<PriceDiscount> getPriceDiscounts(DiscountSelector discountSelector) {
-        return discountService.getPriceDiscounts(discountSelector);
-    }
-
     @RequestMapping(value = "/rate-discounts", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public long addRateDiscount(@RequestBody RateDiscount rateDiscount) {
         return discountService.addDiscount(rateDiscount);
-    }
-
-    @RequestMapping(value = "/rate-discounts", method = RequestMethod.GET)
-    public List<RateDiscount> getRateDiscounts(DiscountSelector discountSelector) {
-        return discountService.getRateDiscounts(discountSelector);
     }
 
     @RequestMapping(value = "/discounts", method = RequestMethod.GET)

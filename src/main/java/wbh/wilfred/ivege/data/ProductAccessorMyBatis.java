@@ -33,4 +33,9 @@ public class ProductAccessorMyBatis implements ProductAccessor {
     public List<Product> getProducts(ProductSelector selector) {
         return productMapper.getProducts(selector);
     }
+
+    @Override
+    public void updateProduct(Product product) {
+        productMapper.updateProduct(product);
+    }
 }

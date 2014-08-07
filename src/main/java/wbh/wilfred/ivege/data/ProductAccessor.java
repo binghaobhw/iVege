@@ -10,4 +10,5 @@ public interface ProductAccessor {
     public List<Product> getProductsByIds(List<Long> ids);
     public long addProduct(Product product);
     public List<Product> getProducts(ProductSelector selector);
+    public void updateProduct(Product product);
 }

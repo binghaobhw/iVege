@@ -1,4 +1,4 @@
-package wbh.wilfred.ivege.web;
+package wbh.wilfred.ivege.web.typehandler;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;

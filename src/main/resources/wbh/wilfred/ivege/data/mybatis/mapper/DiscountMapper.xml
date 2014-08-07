@@ -65,6 +65,9 @@
             <if test="status != null">
                 AND d.`status` = #{status}
             </if>
+            <if test="type != null">
+                AND d.`type` = #{type}
+            </if>
         </where>
     </select>
     

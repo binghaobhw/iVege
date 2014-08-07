@@ -1,19 +1,31 @@
 package wbh.wilfred.ivege.model;
 
 
+import org.hibernate.validator.constraints.NotBlank;
 import org.joda.time.DateTime;
+import wbh.wilfred.ivege.constraint.AnyOrderFields;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@AnyOrderFields(groups = {Order.Update.class})
 public class Order {
+    @Min(value = 1, groups = {Update.class})
     private long id;
+    @NotBlank(groups = {Add.class})
     private String name;
+    @NotBlank(groups = {Add.class})
     private String phone;
+    @NotBlank(groups = {Add.class})
     private String address;
+    @Valid()
     private List<OrderItem> items;
     private Rmb originalTotal;
     private Rmb total;
     private DateTime createTime;
+    @NotNull(groups = {Add.class})
     private DateTime deliverTime;
     private DateTime completeTime;
     private Status status;
@@ -21,6 +33,10 @@ public class Order {
     private Gift gift;
     private Source source;
     private String ext;
+
+    public interface Add {}
+
+    public interface Update {}
 
     public enum Status {
         UNCONFIRMED, CONFIRMED, DELIVERING, COMPLETED, CANCELED

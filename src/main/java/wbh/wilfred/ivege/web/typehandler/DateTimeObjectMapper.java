@@ -1,4 +1,4 @@
-package wbh.wilfred.ivege.web;
+package wbh.wilfred.ivege.web.typehandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

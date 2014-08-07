@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import wbh.wilfred.ivege.data.mybatis.typehandler.DateTimeTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.DiscountTypeHandler;
 import wbh.wilfred.ivege.data.mybatis.typehandler.OrderSourceTypeHandler;
@@ -24,7 +23,6 @@ import wbh.wilfred.ivege.data.mybatis.typehandler.UnitTypeHandler;
 import javax.sql.DataSource;
 
 @Configuration
-@EnableTransactionManagement
 @MapperScan("wbh.wilfred.ivege.data.mybatis.mapper")
 @ComponentScan("wbh.wilfred.ivege.data")
 @ImportResource("classpath:/wbh/wilfred/ivege/config/properties-config.xml")

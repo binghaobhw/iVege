@@ -1,12 +1,18 @@
 package wbh.wilfred.ivege.model;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class OrderItem {
+    @Min(value = 1, groups = {Order.Update.class})
     private long id;
+    @NotNull(groups = {Order.Add.class})
     private Product product;
     private Discount discount;
+    @NotNull(groups = {Order.Add.class})
     private BigDecimal userQuantity;
+    @NotNull(groups = {Order.Add.class})
     private Unit userUnit;
     private BigDecimal quantity;
     private Unit unit;

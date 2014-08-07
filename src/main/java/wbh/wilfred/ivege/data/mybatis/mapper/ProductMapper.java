@@ -9,6 +9,7 @@ public interface ProductMapper {
     public Product getProductById(long id);
     public List<Product> getProductsByIds(List<Long> ids);
     public long addProduct(Product product);
-//    public void updateProduct(Product product);
+    public void updateProduct(Product product);
     public List<Product> getProducts(ProductSelector selector);
+
 }

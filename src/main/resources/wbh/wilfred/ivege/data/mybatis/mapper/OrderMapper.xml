@@ -127,13 +127,13 @@
         LEFT JOIN category c ON c.`id` = p.`category_id`
         <where>
             <if test="name != null">
-                AND o.`name` = #{name}
+                o.`name` = #{name}
             </if>
             <if test="phone != null">
                 AND o.`phone` = #{phone}
             </if>
             <if test="address != null">
-                o.`address` = #{address}
+                AND o.`address` = #{address}
             </if>
             <if test="minTotal != null">
                 AND o.`total` >= #{minTotal}
@@ -174,6 +174,18 @@
                 AND o.`source` = #{source}
             </if>
         </where>
+        LIMIT
+        <if test="offset != 0">
+            #{offset},
+        </if>
+        <choose>
+            <when test="rows != 0">
+                #{rows}
+            </when>
+            <otherwise>
+                20
+            </otherwise>
+        </choose>
     </select>
 
     <update id="updateOrder" parameterType="Order">
@@ -189,23 +201,27 @@
             <if test="completeTime != null">complete_time =
                 #{completeTime},</if>
             <if test="status != null">status = #{status},</if>
-            <if test="discount and discount.id != null">discount_id =
+            <if test="discount != null and discount.id >= 1">discount_id =
                 #{discount.id},</if>
-            <if test="gift and gift.id != null">gift_id = #{gift.id}</if>
+            <if test="gift != null and gift.id >= 1">gift_id = #{gift
+            .id}</if>
         </set>
         WHERE id = #{id}
     </update>
 
-    <update id="updateOrderItem" parameterType="OrderItem">
-        UPDATE order_item
-        <set>
-            <if test="discount and discount.id != null">discount_id =
-                #{discount.id},</if>
-            <if test="quantity != null">quantity = #{quantity},</if>
-            <if test="unit != null">unit = #{unit},</if>
-            <if test="price != null">price = #{price},</if>
-            <if test="subtotal != null">subtotal = #{subtotal}</if>
-        </set>
-        WHERE id = #{id}
+    <update id="updateOrderItems" parameterType="List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE `order_item`
+            <set>
+                <if test="item.discount and item.discount.id >= 1">
+                    `discount_id` = #{item.discount.id},
+                </if>
+                <if test="item.quantity != null">`quantity` = #{item.quantity},</if>
+                <if test="item.unit != null">`unit` = #{item.unit},</if>
+                <if test="item.price != null">`price` = #{item.price},</if>
+                <if test="item.subtotal != null">`subtotal` = #{item.subtotal}</if>
+            </set>
+            WHERE `id` = #{id}
+        </foreach>
     </update>
 </mapper>

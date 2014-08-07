@@ -10,9 +10,10 @@ public interface OrderService {
     public Order getOrderById(long id);
     public Order addOrder(Order order);
     public List<Order> getOrders(OrderSelector orderSelector);
-
     // Fill in the essential fields of saved order, then update
-    void confirmOrder(Order order);
-
+    public void confirmOrder(Order order);
     public void updateOrder(Order order);
+    public void completeOrder(Order order);
+
+
 }

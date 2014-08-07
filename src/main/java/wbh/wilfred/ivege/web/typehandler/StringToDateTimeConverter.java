@@ -1,4 +1,4 @@
-package wbh.wilfred.ivege.web;
+package wbh.wilfred.ivege.web.typehandler;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

@@ -1,6 +1,7 @@
 package wbh.wilfred.ivege.data.mybatis.mapper;
 
 import wbh.wilfred.ivege.model.Order;
+import wbh.wilfred.ivege.model.OrderItem;
 import wbh.wilfred.ivege.model.selector.OrderSelector;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface  OrderMapper {
     public void addOrder(Order order);
     public void addOrderItems(Map<String, Object> param);
     public void updateOrder(Order order);
+    public void updateOrderItems(List<OrderItem> orderItems);
 }

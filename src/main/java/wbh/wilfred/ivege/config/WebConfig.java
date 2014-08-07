@@ -8,8 +8,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import wbh.wilfred.ivege.web.DateTimeObjectMapper;
-import wbh.wilfred.ivege.web.StringToDateTimeConverter;
+import wbh.wilfred.ivege.web.typehandler.DateTimeObjectMapper;
+import wbh.wilfred.ivege.web.typehandler.StringToDateTimeConverter;
 
 import java.util.List;
 
