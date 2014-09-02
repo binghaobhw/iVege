@@ -67,6 +67,8 @@
     </select>
 
     <update id="updateProduct">
-
+        UPDATE `product`
+        <set></set>
+        WHERE `id` = #{id}
     </update>
 </mapper>

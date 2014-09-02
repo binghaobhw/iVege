@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import wbh.wilfred.ivege.web.typehandler.DateTimeObjectMapper;
@@ -17,6 +18,13 @@ import java.util.List;
 @EnableWebMvc
 @ComponentScan("wbh.wilfred.ivege.web")
 public class WebConfig extends WebMvcConfigurerAdapter {
+    @Bean
+    public CommonsMultipartResolver commonsMultipartResolver() {
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        commonsMultipartResolver.setMaxUploadSize(1000000);
+        return commonsMultipartResolver;
+    }
+
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new StringToDateTimeConverter());

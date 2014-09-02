@@ -11,6 +11,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Import(DataConfig.class)
 public class BusinessConfig {
 
-
-
 }
