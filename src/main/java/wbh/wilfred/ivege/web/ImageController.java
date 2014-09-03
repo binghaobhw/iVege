@@ -10,20 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import wbh.wilfred.ivege.service.ImageService;
 
-import java.io.IOException;
-
 @RestController
-public class FileController {
+public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    @RequestMapping(value = "/images", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public String upload(@RequestPart("image") MultipartFile image) throws IOException {
+    public String upload(@RequestPart("image") MultipartFile image) throws Exception {
         if (image.isEmpty()) {
             throw new RuntimeException();
         }
         byte[] bytes = image.getBytes();
-        return imageService.addImage(bytes);
+        return imageService.addImage(bytes, image.getOriginalFilename());
     }
 }
